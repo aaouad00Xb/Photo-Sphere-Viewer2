@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Sphere Viewer</title>
+
+    <!-- Include Photo Sphere Viewer CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core/index.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/markers-plugin/index.min.css" />
+
+</head>
+<body>
+    <!-- The viewer container must have a defined size -->
+    <div id="viewer" style="width: 100vw; height: 100vh;"></div>
+
+    <!-- Import map for module resolution -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three/build/three.module.js",
+                "@photo-sphere-viewer/core": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core/index.module.js",
+                "@photo-sphere-viewer/markers-plugin": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/markers-plugin/index.module.js",
+                "@photo-sphere-viewer/autorotate-plugin": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/autorotate-plugin/index.module.js",
+                "@photo-sphere-viewer/compass-plugin": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/compass-plugin/index.module.js"
+ 
+            }
+        }
+    </script>
+    
+    <!-- Main script -->
+    <script type="module">
+        import { Viewer } from '@photo-sphere-viewer/core';
+        import { MarkersPlugin } from '@photo-sphere-viewer/markers-plugin';
+        import { AutorotatePlugin } from '@photo-sphere-viewer/autorotate-plugin';
+        import { CompassPlugin } from '@photo-sphere-viewer/compass-plugin';
+
+        const viewer = new Viewer({
+            container: document.querySelector('#viewer'),
+            panorama: 'panorama.jpg',
+            
+            plugins: [
+            [MarkersPlugin, {}],
+            [AutorotatePlugin, {
+            autorotatePitch: '5deg',
+        }],
+        [CompassPlugin, {
+            hotspots: [
+                { yaw: '45deg' }, 
+                { yaw: '60deg', color: 'red' },
+            ],
+        }]
+        ]
+        });
+
+
+
+
+        
+    // Get the MarkersPlugin instance
+    const markersPlugin = viewer.getPlugin(MarkersPlugin);
+if (!markersPlugin) {
+    console.error("MarkersPlugin is not initialized properly.");
+}
+
+// Define markers
+    const markers = [
+    {
+        id: 'marker-1',
+        image: 'unnamed.png', // Ensure this image exists in your project
+        position: { yaw: '15deg', pitch: 0 },
+        anchor: 'bottom center',
+        size: { width: 36, height: 36 },
+        tooltip: 'Marker 1', // Tooltip on hover
+        data: { compass: true }
+    }
+    
+                
+    ];
+ 
+     // Define a polygon marker
+     const polygonMarker = {
+            id: 'polygon-1',
+            type: 'polygon', // This defines a polygon
+            polyline: [
+                { yaw: 10, pitch: -10 }, // Point 1
+                { yaw: 20, pitch: 15}, // Point 2
+                { yaw: 25, pitch: 10 }, // Point 3
+                { yaw: 33, pitch: 1 }, // Point 3
+             ],
+            svgStyle: {
+                fill: 'rgba(255, 0, 0, 0.5)', // Red with 50% transparency
+                stroke: 'red', // Red border
+                strokeWidth: 2
+            },
+            tooltip: 'Polygon Area', // Tooltip when hovered
+        };
+
+        // Add the polygon to the viewer
+        markersPlugin.addMarker(polygonMarker);
+
+        // Add markers to the viewer
+        markersPlugin.addMarker(markers[0]); // Add one marker at a time
+ 
+
+        // Event listener for marker clicks
+        viewer.addEventListener('select-marker', (e) => {
+            alert(`You clicked on: ${e.marker.id}`);
+        });
+
+    </script>
+</body>
+</html>
